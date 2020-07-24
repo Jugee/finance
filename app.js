@@ -1,40 +1,27 @@
-var uiController = (function () {
-  var x = 100;
+// Дэлгэцтэй ажиллах контроллер
+var uiController = (function () {})();
 
-  function add(y) {
-    return x + y;
-  }
-  // door bichigdsen code uiController iin public service n ym ==== closure
-  return {
-    publicAdd: function (a) {
-      a = add(a); // zavsar dald baigaa func ashiglaj oruulj irj bg code
-      console.log("Боловсруулсан утга : " + a);
-    },
-  };
-})();
-
+// Санхүүтэй ажиллах контроллер
 var financeController = (function () {})();
 
+// Програмын холбогч контроллер
 var appController = (function (uiController, financeController) {
-  uiController.publicAdd(50);
+  var ctrlAddItem = function () {
+    // 1. Оруулах өгөгдлийг бэлдэцээс олж авна.
+    console.log("Delgetsees ogogdlo avah heseg");
+    // 2. Олж авсан өгөгдлүүдээ санхүүгийн контроллерт дамжуулж тэнд халгална.
+    // 3. Олж авсан өгөгдлүүдийг веб дээр тохирох хэсгүүдэд гаргана
+    // 4. Төсвийг тооцоолно.
+    // 5. Эцсийн үлдэгдэл, тооцоог дэлгэцэнд гаргана.
+  };
+
+  document.querySelector(".add__btn").addEventListener("click", function () {
+    ctrlAddItem();
+  });
+
+  document.addEventListener("keypress", function (event) {
+    if (event.keyCode === 13 || event.which === 13) {
+      ctrlAddItem();
+    }
+  });
 })(uiController, financeController);
-
-// var hunController = (function () {
-//   // data encapsulation
-//   // private data
-//   var bodol = "JS tolgio erguulmeer ym";
-//   // private func tsuud
-//   function tsusGuikh() {}
-//   function huchilTurugchiigAgaaraasSorjTsusruuOruulakh() {}
-//   // door bichigdsen code hunController iin public service n ym ==== closure
-//   return {
-//     yarih: function (yria) {
-//       bodol = "JS bol lag";
-//       huchilTurugchiigAgaaraasSorjTsusruuOruulakh();
-//       tsusGuikh();
-//       console.log("hi");
-//     },
-//   };
-// })();
-
-// hunController.yarih();
