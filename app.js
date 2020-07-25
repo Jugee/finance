@@ -10,7 +10,7 @@ var uiController = (function () {
   return {
     getInput: function (too) {
       return {
-        type: document.querySelector(DOMstrings.inputType).value,
+        type: document.querySelector(DOMstrings.inputType).value, // exp, inc
         description: document.querySelector(DOMstrings.inputDescription).value,
         value: document.querySelector(DOMstrings.inputValue).value,
       };
@@ -23,21 +23,23 @@ var uiController = (function () {
 })();
 
 // Санхүүтэй ажиллах контроллер
+// private data
 var financeController = (function () {
+  // private func baiguulagch
   var Income = function (id, description, value) {
     this.id = id;
     this.description = description;
     this.value = value;
   };
-
+  // private func baiguulagch
   var Expense = function (id, description, value) {
     this.id = id;
     this.description = description;
     this.value = value;
   };
-
+  // private data
   var data = {
-    allItems: {
+    items: {
       inc: [],
       exp: [],
     },
@@ -47,14 +49,33 @@ var financeController = (function () {
       exp: 0,
     },
   };
+
+  return {
+    addItem: function (type, desc, val) {
+      var item, id;
+
+      // identification
+
+      if (type === "inc") {
+        item = new Income(id, desc, val);
+      } else {
+        // type === exp
+        item = new Expense(id, desc, val);
+      }
+
+      data.items[type].push(item);
+    },
+  };
 })();
 
 // Програмын холбогч контроллер
 var appController = (function (uiController, financeController) {
   var ctrlAddItem = function () {
     // 1. Оруулах өгөгдлийг дэлгэцээс олж авна.
-    console.log(uiController.getInput());
+    var input = uiController.getInput();
+    console.log(input);
     // 2. Олж авсан өгөгдлүүдээ санхүүгийн контроллерт дамжуулж тэнд хадгална.
+    financeController.addItem(input.type, input.description, input.value);
     // 3. Олж авсан өгөгдлүүдээ вэб дээрээ тохирох хэсэгт нь гаргана
     // 4. Төсвийг тооцоолно
     // 5. Эцсийн үлдэгдэл, тооцоог дэлгэцэнд гаргана.
