@@ -10,11 +10,11 @@ var uiController = (function () {
   };
 
   return {
-    getInput: function (too) {
+    getInput: function () {
       return {
-        type: document.querySelector(DOMstrings.inputType).value, // exp, inc
+        type: document.querySelector(DOMstrings.inputType).value, //  exp, inc
         description: document.querySelector(DOMstrings.inputDescription).value,
-        value: document.querySelector(DOMstrings.inputValue).value,
+        value: parseInt(document.querySelector(DOMstrings.inputValue).value)
       };
     },
 
@@ -76,6 +76,17 @@ var financeController = (function () {
     this.description = description;
     this.value = value;
   };
+
+  var calculateTotal = function (type) {
+    var sum = 0;
+    data.items[type].forEach(function (el) {
+      sum = sum + el.value;
+    });
+
+    data.totals[type] = sum;
+
+  }
+
   // private data
   var data = {
     items: {
@@ -87,12 +98,40 @@ var financeController = (function () {
       inc: 0,
       exp: 0,
     },
+
+    tusuv: 0,
+
+    huvi: 0,
   };
 
   return {
+    tusuvTootsooloh: function () {
+      // Нийт орлогын нийлбэрийг тооцооло.
+      calculateTotal('inc');
+
+      // Нийт зарлагын нийлбэрийг тооцооло.
+      calculateTotal('exp');
+
+      // Төсвийг шинээр тооцооло.
+      data.tusuv = data.totals.inc - data.totals.exp;
+
+      // Орлого зарлагын хувийг тооцооло.
+      data.huvi = Math.round((data.totals.exp / data.totals.inc) * 100);
+
+    },
+
+    tusviigAvah: function () {
+      return {
+        tusuv: data.tusuv,
+        huvi: data.huvi,
+        totalsInc: data.totals.inc,
+        totalsExp: data.totals.exp,
+
+      }
+    },
+
     addItem: function (type, desc, val) {
       var item, id;
-
       // identification
       if (data.items[type].length === 0) id = 1;
 
@@ -115,6 +154,7 @@ var financeController = (function () {
     seeData: function () {
       return data;
     }
+
   };
 })();
 
@@ -123,14 +163,26 @@ var appController = (function (uiController, financeController) {
   var ctrlAddItem = function () {
     // 1. Оруулах өгөгдлийг дэлгэцээс олж авна.
     var input = uiController.getInput();
+    if (input.description !== 0 && input.value) {
+      // 2. Олж авсан өгөгдлүүдээ санхүүгийн контроллерт дамжуулж тэнд хадгална.
+      var item = financeController.addItem(input.type, input.description, input.value);
+      // 3. Олж авсан өгөгдлүүдээ вэб дээрээ тохирох хэсэгт нь гаргана
+      uiController.addListItem(item, input.type);
+      uiController.clearFields();
 
-    // 2. Олж авсан өгөгдлүүдээ санхүүгийн контроллерт дамжуулж тэнд хадгална.
-    var item = financeController.addItem(input.type, input.description, input.value);
-    // 3. Олж авсан өгөгдлүүдээ вэб дээрээ тохирох хэсэгт нь гаргана
-    uiController.addListItem(item, input.type);
-    uiController.clearFields();
-    // 4. Төсвийг тооцоолно
-    // 5. Эцсийн үлдэгдэл, тооцоог дэлгэцэнд гаргана.
+      // 4. Төсвийг тооцоолно
+      financeController.tusuvTootsooloh();
+
+      // 5. Эцсийн үлдэгдэл, 
+      var tusuv = financeController.tusviigAvah();
+
+      // Тооцоог дэлгэцэнд гаргана.
+      console.log("Tusuv::>>", tusuv)
+    } else {
+      alert("Та талбарын утга дутуу байна.")
+    }
+
+
   };
 
   var setupEventListeners = function () {
