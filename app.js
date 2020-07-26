@@ -6,7 +6,12 @@ var uiController = (function () {
     inputValue: ".add__value",
     addBtn: ".add__btn",
     incomeList: ".income__list",
-    expenseList: ".expenses__list"
+    expenseList: ".expenses__list",
+    tusuvLabel: ".budget__value",
+    incomeLabel: ".budget__income--value",
+    expensLabel: ".budget__expenses--value",
+    percentagaLabel: ".budget__expenses--percentage",
+
   };
 
   return {
@@ -37,6 +42,20 @@ var uiController = (function () {
 
     },
 
+
+    //
+    tusviigUzuulekh: function (tusuv) {
+      document.querySelector(DOMstrings.tusuvLabel).textContent = tusuv.tusuv;
+      document.querySelector(DOMstrings.incomeLabel).textContent = tusuv.totalsInc;
+      document.querySelector(DOMstrings.expensLabel).textContent = tusuv.totalsExp;
+      if (tusuv.huvi !== 0) {
+        document.querySelector(DOMstrings.percentagaLabel).textContent = tusuv.huvi + "%";
+      }
+      else {
+        document.querySelector(DOMstrings.percentagaLabel).textContent = tusuv.huvi;
+      }
+
+    },
 
     addListItem: function (item, type) {
       // Орлого зарлагын элементийн агуулсан html ийг бэлтгэнэ.
@@ -82,9 +101,8 @@ var financeController = (function () {
     data.items[type].forEach(function (el) {
       sum = sum + el.value;
     });
-
+    // Нийт орлого зарлага data.total.inc && exp рүү нэмж байгаа
     data.totals[type] = sum;
-
   }
 
   // private data
@@ -176,8 +194,10 @@ var appController = (function (uiController, financeController) {
       // 5. Эцсийн үлдэгдэл, 
       var tusuv = financeController.tusviigAvah();
 
-      // Тооцоог дэлгэцэнд гаргана.
-      console.log("Tusuv::>>", tusuv)
+      // 6. Тооцоог дэлгэцэнд гаргана.
+
+      uiController.tusviigUzuulekh(tusuv);
+
     } else {
       alert("Та талбарын утга дутуу байна.")
     }
@@ -200,6 +220,12 @@ var appController = (function (uiController, financeController) {
   return {
     init: function () {
       console.log("Application started...");
+      uiController.tusviigUzuulekh({
+        tusuv: 0,
+        huvi: 0,
+        totalsInc: 0,
+        totalsExp: 0,
+      });
       setupEventListeners();
     },
   };
